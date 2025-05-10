@@ -1,0 +1,66 @@
+pip install nltk
+import nltk
+import random
+import string
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+
+# Download resources
+nltk.download('punkt')
+nltk.download('stopwords')
+
+# Define a simple corpus for chatbot knowledge
+corpus = """
+Hello! I am your chatbot assistant.
+I can help you with Python, machine learning, and artificial intelligence.
+Natural Language Processing is used to understand human language.
+Machine learning allows systems to learn from data.
+Python is a popular language for AI and data science.
+Let me know how I can assist you.
+"""
+
+# Preprocess the corpus
+sentences = sent_tokenize(corpus.lower())
+
+# Predefined greetings
+greeting_inputs = ["hello", "hi", "hey", "greetings"]
+greeting_responses = ["Hello!", "Hi there!", "Greetings!", "Hey! How can I help you?"]
+
+# Function to check for greetings
+def respond_to_greeting(text):
+    for word in text.lower().split():
+        if word in greeting_inputs:
+            return random.choice(greeting_responses)
+    return None
+
+# Function to generate a basic response
+def generate_response(user_input):
+    user_input = user_input.lower()
+    response = ''
+    max_overlap = 0
+
+    for sentence in sentences:
+        common_words = set(word_tokenize(sentence)) & set(word_tokenize(user_input))
+        overlap = len(common_words)
+        if overlap > max_overlap:
+            max_overlap = overlap
+            response = sentence
+
+    if response:
+        return response
+    else:
+        return "I'm not sure how to respond to that."
+
+# Chat loop
+print("Chatbot: Hello! Ask me something or type 'bye' to exit.")
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == 'bye':
+        print("Chatbot: Goodbye!")
+        break
+
+    greeting = respond_to_greeting(user_input)
+    if greeting:
+        print("Chatbot:", greeting)
+    else:
+        print("Chatbot:", generate_response(user_input))
